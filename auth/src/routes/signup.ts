@@ -1,9 +1,15 @@
 import express from 'express';
-import { body, validationResult } from 'express-validator';
+import { body } from 'express-validator';
+import jwt from 'jsonwebtoken';
 
 // Errors
-import { DatabaseConnectionError } from "../errors/database-connection-error";
-import { RequestValidationError } from "../errors/request-validation-error";
+import { BadRequestError } from "../errors/bad-request-error";
+
+// Middlewares
+import { validateRequest } from "../middlewares/validate-request";
+
+// Models
+import { User } from "../models/user";
 
 // Types
 import type { Request, Response } from 'express';
@@ -21,19 +27,33 @@ router.post(
         .isLength({ min: 4, max: 20 })
         .withMessage('Password must be between 4 and 20 characters')
     ],
+    validateRequest,
     async (req: Request, res: Response) => {
-        const errors = validationResult(req);
+        const { email, password } = req.body;
 
-        if (!errors.isEmpty()) {
-            throw new RequestValidationError(errors.array());
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            throw new BadRequestError('Email already in use');
         }
 
-        const { email, password } = req.body;
-        console.log('Creating a user...', email, password);
+        const user = User.build({ email, password });
+        await user.save();
 
-        throw new DatabaseConnectionError();
+        // Generate JWT
+        const userJwt = jwt.sign(
+            {
+                id: user.id,
+                email: user.email,
+            },
+            process.env.JWT_KEY! // make Typescript happy with exclamation mark
+        );
 
-        res.send({});
+        // Store it on session object
+        req.session = {
+            jwt: userJwt,
+        };
+
+        res.status(201).send(user);
     }
 );
 
