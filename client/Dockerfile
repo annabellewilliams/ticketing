@@ -1,4 +1,8 @@
-FROM ubuntu:latest
-LABEL authors="Annabelle"
+FROM node:alpine
 
-ENTRYPOINT ["top", "-b"]
+WORKDIR /app
+COPY package.json .
+RUN npm install
+COPY . .
+
+CMD ["npm", "run", "dev"]

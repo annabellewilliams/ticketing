@@ -4,10 +4,10 @@ import { json } from 'body-parser';
 import cookieSession from 'cookie-session';
 
 // Errors
-import { NotFoundError } from "./errors/not-found-error";
+import { NotFoundError } from "@micro-git-tix/common";
 
 // Middlewares
-import { errorHandler } from "./middlewares/error-handler";
+import { errorHandler } from "@micro-git-tix/common";
 
 // Routers
 import { currentUserRouter } from "./routes/current-user";

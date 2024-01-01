@@ -3,10 +3,10 @@ import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
 
 // Errors
-import { BadRequestError } from "../errors/bad-request-error";
+import { BadRequestError } from "@micro-git-tix/common";
 
 // Middlewares
-import { validateRequest } from "../middlewares/validate-request";
+import { validateRequest } from "@micro-git-tix/common";
 
 // Models
 import { User } from "../models/user";

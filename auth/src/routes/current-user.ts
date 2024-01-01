@@ -1,7 +1,7 @@
 import express from 'express';
 
 // Middlewares
-import { currentUser } from "../middlewares/current-user";
+import { currentUser } from "@micro-git-tix/common";
 
 const router = express.Router();
 
