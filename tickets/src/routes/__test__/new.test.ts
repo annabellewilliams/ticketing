@@ -4,6 +4,7 @@ import { it, expect } from "@jest/globals";
 import { app } from "../../app";
 import { getSigninCookie } from "../../test/utils/get-signin-cookie";
 import { Ticket } from "../../models/ticket";
+import { natsWrapper} from "../../nats-wrapper";
 
 it('has a route handler listening to /api/tickets for post requests', async () => {
     const response = await request(app)
@@ -85,4 +86,19 @@ it('creates a ticket with valid inputs', async () => {
     expect(tickets[0].title).toEqual(title);
     expect(tickets[0].price).toEqual(price);
     expect(tickets[0].userId).toEqual(userId);
+});
+
+it('publishes an event', async () => {
+    const title = 'Concert';
+
+    await request(app)
+        .post('/api/tickets')
+        .set('Cookie', await getSigninCookie())
+        .send({
+            title,
+            price: 20
+        })
+        .expect(201);
+
+    expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

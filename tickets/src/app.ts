@@ -11,7 +11,7 @@ import { errorHandler, currentUser } from "@micro-git-tix/common";
 
 // Routers
 import { createTicketRouter } from "./routes/new";
-import { editTicketRouter } from "./routes/edit";
+import { editTicketRouter } from "./routes/update";
 import { indexRouter } from "./routes";
 import { showTicketRouter } from "./routes/show";
 

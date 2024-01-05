@@ -4,6 +4,7 @@ import { it, expect } from "@jest/globals";
 
 import { app } from "../../app";
 import { getSigninCookie } from "../../test/utils/get-signin-cookie";
+import { natsWrapper } from "../../nats-wrapper";
 
 it('returns a 404 if the provided id does not exist', async () => {
     const id = new mongoose.Types.ObjectId().toHexString();
@@ -127,4 +128,31 @@ it('updates the ticket provided valid inputs', async () => {
         .send();
     expect(ticketResponse.body.title).toEqual(payload.title);
     expect(ticketResponse.body.price).toEqual(payload.price);
+});
+
+it('publishes an event', async () => {
+    const cookie = await getSigninCookie();
+
+    // Create ticket
+    const response = await request(app)
+        .post('/api/tickets')
+        .set('Cookie', cookie)
+        .send({
+            title: 'Concert',
+            price: 20
+        })
+        .expect(201);
+
+    // Edit ticket
+    const payload = {
+        title: 'Outdoor concert',
+        price: 100,
+    }
+    await request(app)
+        .put(`/api/tickets/${response.body.id}`)
+        .set('Cookie', cookie)
+        .send(payload)
+        .expect(200);
+
+    expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

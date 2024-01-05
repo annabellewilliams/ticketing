@@ -10,6 +10,10 @@ import { requireAuth, validateRequest } from "@micro-git-tix/common";
 // Models
 import { Ticket } from "../models/ticket";
 
+// NATS
+import { natsWrapper } from "../nats-wrapper";
+import { TicketUpdatedPublisher } from "../events/publishers/ticket-updated-publisher";
+
 // Types
 import type { Request, Response } from "express";
 
@@ -46,6 +50,12 @@ router.put(
             price: req.body.price,
         });
         await ticket.save();
+        new TicketUpdatedPublisher(natsWrapper.client).publish({
+            id: ticket.id,
+            title: ticket.title,
+            price: ticket.price,
+            userId: ticket.userId,
+        });
 
         res.status(200).send(ticket);
     }
