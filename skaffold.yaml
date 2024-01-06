@@ -31,6 +31,14 @@ build:
             dest: .
       docker:
         dockerfile: Dockerfile
+    - image: annabelleew/orders
+      context: orders
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+      docker:
+        dockerfile: Dockerfile
 deploy:
   kubectl: {}
 
