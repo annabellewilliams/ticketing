@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import request from "supertest";
 import { it } from "@jest/globals";
 
@@ -11,6 +12,7 @@ it('marks an order as cancelled', async () => {
     const ticket = Ticket.build({
         title: 'Concert',
         price: 20,
+        id: new mongoose.Types.ObjectId().toHexString(),
     });
     await ticket.save();
 
@@ -36,6 +38,7 @@ it('emits an order cancelled event', async () => {
     const ticket = Ticket.build({
         title: 'Concert',
         price: 20,
+        id: new mongoose.Types.ObjectId().toHexString(),
     });
     await ticket.save();
 

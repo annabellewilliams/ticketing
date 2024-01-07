@@ -5,6 +5,7 @@ import { it, expect } from "@jest/globals";
 import { app } from "../../app";
 import { getSigninCookie } from "../../test/utils/get-signin-cookie";
 import { natsWrapper } from "../../nats-wrapper";
+import { Ticket } from "../../models/ticket";
 
 it('returns a 404 if the provided id does not exist', async () => {
     const id = new mongoose.Types.ObjectId().toHexString();
@@ -155,4 +156,37 @@ it('publishes an event', async () => {
         .expect(200);
 
     expect(natsWrapper.client.publish).toHaveBeenCalled();
+});
+
+it('rejects updates if the ticket is reserved', async () => {
+    const cookie = await getSigninCookie();
+
+    // Create ticket
+    const response = await request(app)
+        .post('/api/tickets')
+        .set('Cookie', cookie)
+        .send({
+            title: 'Concert',
+            price: 20,
+        })
+        .expect(201);
+
+    // Get created ticket from database
+    const ticket = await Ticket.findById(response.body.id);
+    expect(ticket).toBeDefined();
+
+    // Reserve ticket
+    const orderId = new mongoose.Types.ObjectId().toHexString();
+    ticket!.set({ orderId });
+    await ticket!.save();
+
+    // Update reserved ticket and expect 400
+    await request(app)
+        .put(`/api/tickets/${response.body.id}`)
+        .set('Cookie', cookie)
+        .send({
+            title: 'New concert',
+            price: 35,
+        })
+        .expect(400);
 });

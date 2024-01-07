@@ -3,11 +3,12 @@ import { it } from "@jest/globals";
 
 import { app } from "../../app";
 import { getSigninCookie } from "../../test/utils/get-signin-cookie";
-import { Order } from "../../models/order";
 import { Ticket } from "../../models/ticket";
+import mongoose from "mongoose";
 
 const buildTicket = async () => {
     const ticket = Ticket.build({
+        id: new mongoose.Types.ObjectId().toHexString(),
         title: 'Concert',
         price: 20,
     });

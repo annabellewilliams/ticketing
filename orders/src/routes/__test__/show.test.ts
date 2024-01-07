@@ -3,14 +3,15 @@ import { it } from "@jest/globals";
 
 import { app } from "../../app";
 import { getSigninCookie } from "../../test/utils/get-signin-cookie";
-import { Order } from "../../models/order";
 import { Ticket } from "../../models/ticket";
+import mongoose from "mongoose";
 
 it('returns a 400 if the user does not own the order', async () => {
     const userOne = await getSigninCookie();
     const userTwo = await getSigninCookie();
 
     const ticket = Ticket.build({
+        id: new mongoose.Types.ObjectId().toHexString(),
         title: 'Concert',
         price: 20,
     });
@@ -35,6 +36,7 @@ it('returns a 200 and the order for the right user', async () => {
     const userTwo = await getSigninCookie();
 
     const ticket = Ticket.build({
+        id: new mongoose.Types.ObjectId().toHexString(),
         title: 'Concert',
         price: 20,
     });
@@ -62,6 +64,7 @@ it('returns a 200 and the order for the right user', async () => {
 it('fetches the order', async () => {
     // Create a ticket
     const ticket = Ticket.build({
+        id: new mongoose.Types.ObjectId().toHexString(),
         title: 'Concert',
         price: 20
     });
