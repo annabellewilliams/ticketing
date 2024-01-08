@@ -39,6 +39,22 @@ build:
             dest: .
       docker:
         dockerfile: Dockerfile
+    - image: annabelleew/expiration
+      context: expiration
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+      docker:
+        dockerfile: Dockerfile
+    - image: annabelleew/payments
+      context: payments
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+      docker:
+        dockerfile: Dockerfile
 deploy:
   kubectl: {}
 

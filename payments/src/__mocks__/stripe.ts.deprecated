@@ -1,0 +1,5 @@
+export const stripe = {
+    charges: {
+        create: jest.fn().mockResolvedValue({}), // return promise that resolves itself to {}
+    }
+};
