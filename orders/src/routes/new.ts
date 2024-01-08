@@ -54,7 +54,7 @@ router.post(
 
         // Calculate an expiration date for this order
         const expiration = new Date();
-        expiration.setDate(expiration.getSeconds() + EXPIRATION_WINDOW_SECONDS);
+        expiration.setSeconds(expiration.getSeconds() + EXPIRATION_WINDOW_SECONDS);
 
         // Build the order and save it to the database
         const order = Order.build({
