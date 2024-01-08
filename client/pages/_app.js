@@ -9,9 +9,11 @@ import Header from "../components/header";
 // ref: github.com/zeit/next.js/blob/master/errors/css-global.md
 const AppComponent = ({ Component, pageProps, currentUser }) => {
     return (
-        <div className="container">
-            <Header currentUser={currentUser} />
-            <Component {...pageProps} />
+        <div>
+            <Header currentUser={currentUser}/>
+            <div className="container">
+                <Component currentUser={currentUser} {...pageProps} />
+            </div>
         </div>
     );
 };
@@ -23,7 +25,7 @@ AppComponent.getInitialProps = async (appContext) => {
 
     let pageProps = {};
     if (appContext.Component.getInitialProps) {
-        pageProps = await appContext.Component.getInitialProps(appContext.ctx);
+        pageProps = await appContext.Component.getInitialProps(appContext.ctx, client, data.currentUser);
     }
 
     return {
